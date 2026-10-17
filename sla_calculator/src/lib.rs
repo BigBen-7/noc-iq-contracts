@@ -15,6 +15,9 @@ mod tests;
 mod batch_downtime_tests;
 
 pub mod adaptive_tuning;
+pub mod storage_version;
+pub mod submission_rate;
+pub mod symbol_constants;
 pub mod batch;
 pub mod breach_escalation;
 pub mod claim_deadline;

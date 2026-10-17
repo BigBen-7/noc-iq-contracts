@@ -37,3 +37,56 @@ pub const SEV_CRITICAL: Symbol = symbol_short!("critical");
 pub const SEV_HIGH:     Symbol = symbol_short!("high");
 pub const SEV_MEDIUM:   Symbol = symbol_short!("medium");
 pub const SEV_LOW:      Symbol = symbol_short!("low");
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Symbols that share a value on purpose: the storage key and the
+    /// event version tag are in different namespaces, but two constants in
+    /// the *same* namespace must never collide.
+    #[test]
+    fn test_no_duplicate_symbol_values_within_a_namespace() {
+        let groups: &[&[(&str, Symbol)]] = &[
+            &[
+                ("KEY_ADMIN", KEY_ADMIN),
+                ("KEY_OPERATOR", KEY_OPERATOR),
+                ("KEY_CONFIG", KEY_CONFIG),
+                ("KEY_PAUSED", KEY_PAUSED),
+                ("KEY_STATS", KEY_STATS),
+                ("KEY_HISTORY", KEY_HISTORY),
+                ("KEY_VERSION", KEY_VERSION),
+            ],
+            &[
+                ("EVT_SLA_CALC", EVT_SLA_CALC),
+                ("EVT_CONFIG_UPD", EVT_CONFIG_UPD),
+                ("EVT_PAUSED", EVT_PAUSED),
+                ("EVT_UNPAUSED", EVT_UNPAUSED),
+                ("EVT_OP_SET", EVT_OP_SET),
+                ("EVT_PRUNED", EVT_PRUNED),
+                ("EVT_VERSION", EVT_VERSION),
+            ],
+            &[("STATUS_MET", STATUS_MET), ("STATUS_VIOL", STATUS_VIOL)],
+            &[("PAY_REWARD", PAY_REWARD), ("PAY_PENALTY", PAY_PENALTY)],
+            &[
+                ("RATING_TOP", RATING_TOP),
+                ("RATING_EXCEL", RATING_EXCEL),
+                ("RATING_GOOD", RATING_GOOD),
+                ("RATING_POOR", RATING_POOR),
+            ],
+            &[
+                ("SEV_CRITICAL", SEV_CRITICAL),
+                ("SEV_HIGH", SEV_HIGH),
+                ("SEV_MEDIUM", SEV_MEDIUM),
+                ("SEV_LOW", SEV_LOW),
+            ],
+        ];
+        for group in groups {
+            for (i, (name_a, a)) in group.iter().enumerate() {
+                for (name_b, b) in group.iter().skip(i + 1) {
+                    assert!(a != b, "{} and {} share a symbol value", name_a, name_b);
+                }
+            }
+        }
+    }
+}
